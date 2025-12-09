@@ -1,0 +1,49 @@
+<script setup>
+import DragAndDropFileUpload from '@/Components/Common/File/DragAndDropFileUpload.vue';
+import FileItem from '@/Components/Shared/FileItem.vue';
+
+const props = defineProps({
+    form: { type: Object, default: () => ({}) },
+    withHeader: { type: Boolean, default: true },
+});
+
+function handleUpload(files, index) {
+    props.form.documents_legal_franchise_agreement[index].files = files;
+}
+
+function handleRemoveFile(parentIndex, fileIndex) {
+    props.form.documents_legal_franchise_agreement[parentIndex].files.splice(fileIndex, 1);
+}
+</script>
+
+<template>
+    <div class="bg-white shadow sm:rounded-2xl p-6">
+        <p class="text-xl font-semibold">Legal & Franchise Agreement</p>
+        <div class="border-t mt-5">
+            <div v-for="(document, index) in form.documents_legal_franchise_agreement" class="mt-5">
+                <div>
+                    <p class="font-medium text-sm text-gray-700 mb-1">
+                        {{ document.label }}
+                    </p>
+
+                    <FileItem
+                        v-for="(file, fileIndex) in document.files"
+                        :file="file"
+                        class="mb-2"
+                        @remove="handleRemoveFile(index, fileIndex)"
+                    />
+
+                    <DragAndDropFileUpload
+                        :id="document.value"
+                        :file-types="'.jpg,.jpeg,.png,.pdf,.doc,.docx'"
+                        custom-class="p-2 !rounded-md"
+                        label="Upload a file"
+                        label-class="!text-indigo-600"
+                        type="single_line"
+                        @uploaded="handleUpload($event, index)"
+                    />
+                </div>
+            </div>
+        </div>
+    </div>
+</template>
